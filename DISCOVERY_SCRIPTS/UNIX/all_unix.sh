@@ -31,7 +31,7 @@ Disc_RHEL_OS_HW()
 	model=`$CMD1 -t system | grep "Product" | cut -d ":" -f 2|sed 's/^ *//g'`;
 	ram=`$CMD2 -g | grep Mem  | awk '{print $2}'`;
 	ram1=$(($ram+1));
-	hdd=`$CMD5 unit GB -l | grep -i Disk | awk '{print $3}' | grep -v MB | cut -d 'G' -f 1 | awk '{sum+=$1}END{print sum}'`;
+	hdd=`$CMD5 -s unit GB -l | grep -i Disk | awk '{print $3}' | grep -v MB | cut -d 'G' -f 1 | awk '{sum+=$1}END{print sum}'`;
 	cpu=`cat /proc/cpuinfo | grep processor | wc -l`;
 	gateway=`$CMD3 route | grep -i default |awk  '{print $3}'`;
 	macadd=`$CMD3 -o link|  awk '{print $2,$(NF-2)}' | grep -v "00:00:00:00:00:00"| sed 's/$/ /' | sed 's/: /->/' | tr '\n' ' '`;
@@ -156,7 +156,7 @@ Disc_CENT_OS_HW()
 	model=`$CMD1 -t system | grep "Product" | cut -d ":" -f 2|sed 's/^ *//g'`;
 	ram=`$CMD2 -g | grep Mem  | awk '{print $2}'`;
 	ram1=$(($ram+1));
-	hdd=`$CMD5 unit GB -l | grep -i Disk | awk '{print $3}' | grep -v MB | cut -d 'G' -f 1 | awk '{sum+=$1}END{print sum}'`;
+	hdd=`$CMD5 -s unit GB -l | grep -i Disk | awk '{print $3}' | grep -v MB | cut -d 'G' -f 1 | awk '{sum+=$1}END{print sum}'`;
 	cpu=`cat /proc/cpuinfo | grep processor | wc -l`;
 	gateway=`$CMD3 route | grep -i default |awk  '{print $3}'`;
 	macadd=`$CMD3 -o link|  awk '{print $2,$(NF-2)}' | grep -v "00:00:00:00:00:00"| sed 's/$/ /' | sed 's/: /->/' | tr '\n' ' '`;
@@ -282,7 +282,7 @@ Disc_SUSE_OS_HW()
 	model=`$CMD1 -t system | grep "Product" | cut -d ":" -f 2|sed 's/^ *//g'`;
 	ram=`$CMD2 -g | grep Mem  | awk '{print $2}'`;
 	ram1=$(($ram+1));
-	hdd=`$CMD5 unit GB -l | grep -i Disk | awk '{print $3}' | grep -v MB | cut -d 'G' -f 1 | awk '{sum+=$1}END{print sum}'`;
+	hdd=`$CMD5 -s unit GB -l | grep -i Disk | awk '{print $3}' | grep -v MB | cut -d 'G' -f 1 | awk '{sum+=$1}END{print sum}'`;
 	cpu=`cat /proc/cpuinfo | grep processor | wc -l`;
 	gateway=`$CMD3 route | grep -i default |awk  '{print $3}'`;
 	macadd=`$CMD3 -o link|  awk '{print $2,$(NF-2)}' | grep -v "00:00:00:00:00:00"| sed 's/$/ /' | sed 's/: /->/' | tr '\n' ' '`;
@@ -408,7 +408,7 @@ Disc_UBUNTU_OS_HW()
 	model=`$CMD1 -t system | grep "Product" | cut -d ":" -f 2|sed 's/^ *//g'`;
 	ram=`$CMD2 -g | grep Mem  | awk '{print $2}'`;
 	ram1=$(($ram+1));
-	hdd=`$CMD5 unit GB -l | grep -i Disk | awk '{print $3}' | grep -v MB | cut -d 'G' -f 1 | awk '{sum+=$1}END{print sum}'`;
+	hdd=`$CMD5 -s unit GB -l | grep -i Disk | awk '{print $3}' | grep -v MB | cut -d 'G' -f 1 | awk '{sum+=$1}END{print sum}'`;
 	cpu=`cat /proc/cpuinfo | grep processor | wc -l`;
 	gateway=`$CMD3 route | grep -i default |awk  '{print $3}'`;
 	macadd=`$CMD3 -o link|  awk '{print $2,$(NF-2)}' | grep -v "00:00:00:00:00:00"| sed 's/$/ /' | sed 's/: /->/' | tr '\n' ' '`;
