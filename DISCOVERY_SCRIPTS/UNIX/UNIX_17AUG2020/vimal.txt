@@ -1,0 +1,2 @@
+updated - all output log file extention is changed to *.log
+Status.log file path is now /opt/ngoagent/JAM/Stats/Status.log
