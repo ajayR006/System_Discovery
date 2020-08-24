@@ -12,7 +12,7 @@
 export PATH=$PATH:/usr/sbin;
 PTH="/opt/ngoagent/JAM/Discovery/script/";
 source ${PTH}JAM_CONFIG.conf
-rm -f ${PTH}JAM_success_*.log
+sudo rm -f ${PTH}JAM_success_*.log
 
 CMD10=`which timeout|head -1`;
 
