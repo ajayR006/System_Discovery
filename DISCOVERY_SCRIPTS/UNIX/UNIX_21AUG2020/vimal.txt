@@ -1,0 +1,1 @@
+Small changes as scripte were not able to execute because of path problem. exported the path within the script to resolve it.
