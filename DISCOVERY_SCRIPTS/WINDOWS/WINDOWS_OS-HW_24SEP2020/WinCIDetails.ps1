@@ -27,7 +27,8 @@ Function UpdateStatusLog
             $Log_Type="",
             $Log_Message=""
     )
-    $dt=Get-Date -Format "ddd MMM dd HH:mm:ss yyyy";
+    #$dt=Get-Date -Format "ddd MMM dd HH:mm:ss yyyy";
+    $dt=Get-Date -Format "dd-MM-yyyy HH:mm:ss";
     $dtArr=$dt.split(" ");
     $tempdt=$dtArr[-1];
     $tempdt=(get-culture).Name + " " + $tempdt;
@@ -35,10 +36,12 @@ Function UpdateStatusLog
     $strdt=""
     $dtArr | Foreach {$strdt += $_ + " "};
     $strdt=$strdt.Trim();
-    $StatusLogString=$strdt;
+    #$StatusLogString=$strdt;
+    $StatusLogString=$dt;
     $StatusLogString=$StatusLogString + "," + $Service_Function;
-    $StatusLogString=$StatusLogString + ","  + "Script_Version-" + $Version;
-    $StatusLogString=$StatusLogString + ","  + $env:Computername;
+    #$StatusLogString=$StatusLogString + ","  + "Script_Version-" + $Version;
+    $StatusLogString=$StatusLogString + $Version;
+    $StatusLogString=$StatusLogString + "," + $env:Computername;
     $StatusLogString=$StatusLogString + "-" + $IP_Address;
     $StatusLogString=$StatusLogString + "," + $Log_Type;
     $StatusLogString=$StatusLogString + "," + $Log_Message + ".";
@@ -81,20 +84,20 @@ if(InitializeScript -ModulePath $My_FolderPath -eq $true)
         (Check-OutPath -OutPath $OutPath -CreateNew -eq 1))
     {
         Writeto-Log -TypeOfComment Info -Comment "Logging Initialized.";
-        Writeto-Log -TypeOfComment Info -Comment "********************************************SCRIPT START********************************************" -LogPath $LogPath;
-        Writeto-Log -TypeOfComment Info -Comment "Script Name $My_Name." -LogPath $LogPath;
-        Writeto-Log -TypeOfComment Info -Comment "Script Version $ScriptVersion." -LogPath $LogPath;
-        Writeto-Log -TypeOfComment Info -Comment "Template Version $TemplateVersion." -LogPath $LogPath -EchoDisplayOff;
-        Writeto-Log -TypeOfComment Info -Comment "Logged in user is $User." -LogPath $LogPath;
+        Writeto-Log -TypeOfComment Info -Comment "********************************************SCRIPT START********************************************"  -LogPath $LogPath;
+        Writeto-Log -TypeOfComment Info -Comment "Script Name $My_Name."  -LogPath $LogPath;
+        Writeto-Log -TypeOfComment Info -Comment "Script Version $ScriptVersion."  -LogPath $LogPath;
+        Writeto-Log -TypeOfComment Info -Comment "Template Version $TemplateVersion."  -LogPath $LogPath;
+        Writeto-Log -TypeOfComment Info -Comment "Logged in user is $User."  -LogPath $LogPath;
         if(Test-UserAdmin)
-        {Writeto-Log -TypeOfComment Info -Comment "Script running with Admin privilieges." -LogPath $Logpath -EchoDisplayOff;}
+        {Writeto-Log -TypeOfComment Info -Comment "Script running with Admin privilieges." }
         else
-        {Writeto-Log -TypeOfComment Info -Comment "Script not running with Admin privilieges." -LogPath $Logpath -EchoDisplayOff;}
-        Writeto-Log -TypeOfComment Info -Comment "System name is $sysName." -LogPath $Logpath;
-        Writeto-Log -TypeOfComment Info -Comment $("OS " + $($(gwmi win32_operatingsystem).name.split("|"))[0]) -LogPath $LogPath;
-        Writeto-Log -TypeOfComment Info -Comment $("Powershell version is " + $PSVersionTable.PSVersion.Major + ".") -LogPath $LogPath;
-        Writeto-Log -TypeOfComment Info -Comment "Path of Script file is $My_FullPath."-LogPath $LogPath;
-        Writeto-Log -TypeOfComment Info -Comment "Path of Log File is $LogPath." -LogPath $LogPath;
+        {Writeto-Log -TypeOfComment Info -Comment "Script not running with Admin privilieges." }
+        Writeto-Log -TypeOfComment Info -Comment "System name is $sysName."  -LogPath $LogPath;
+        Writeto-Log -TypeOfComment Info -Comment $("OS " + $($(gwmi win32_operatingsystem).name.split("|"))[0])  -LogPath $LogPath;
+        Writeto-Log -TypeOfComment Info -Comment $("Powershell version is " + $PSVersionTable.PSVersion.Major + ".")   -LogPath $LogPath;
+        Writeto-Log -TypeOfComment Info -Comment "Path of Script file is $My_FullPath.  -LogPath $LogPath";
+        Writeto-Log -TypeOfComment Info -Comment "Path of Log File is $LogPath." -LogPath $LogPath ;
         try
         {
             Killer-Time-Checker -TimeOutinMinutes $SelfTimer -StartTime $ScriptStartTime;
@@ -105,12 +108,12 @@ if(InitializeScript -ModulePath $My_FolderPath -eq $true)
 
             if(test-path -path $My_StatusLogPath)
             {
-                writeto-log -TypeOfComment Info -Comment "Status.log file is present at $My_StatusLogPath." -LogPath $LogPath ;
-                writeto-log -TypeOfComment Info -Comment "File will be appended." -LogPath $LogPath ;
+                writeto-log -TypeOfComment Info -Comment "Status.log file is present at $My_StatusLogPath."  -LogPath $LogPath;
+                writeto-log -TypeOfComment Info -Comment "File will be appended."  -LogPath $LogPath ;
             }
             else 
             {
-                writeto-log -TypeOfComment Info -Comment "Status.log file not present at $My_StatusLogPath." -LogPath $LogPath ;
+                writeto-log -TypeOfComment Info -Comment "Status.log file not present at $My_StatusLogPath."  -LogPath $LogPath;
                 writeto-log -TypeOfComment Info -Comment "Attempting to create the file and structure." -LogPath $LogPath;
                 if($(Check-LogPath -LogPath $My_StatusLogPath -CreateNew) -eq -1)
                 {
@@ -149,7 +152,8 @@ if(InitializeScript -ModulePath $My_FolderPath -eq $true)
             }
 
 
-            $My_StatusLogString = UpdateStatusLog -Service_Function "OS_HW_DISCOVERY" -Version $ScriptVersion -IP_Address $ipv4[0] -Log_Type "Info" -Log_Message "Script Start";
+            #$My_StatusLogString = UpdateStatusLog -Service_Function "OS_HW_DISCOVERY" -Version $ScriptVersion -IP_Address $ipv4[0] -Log_Type "Info" -Log_Message "Script Start";
+	    $My_StatusLogString = UpdateStatusLog -Service_Function "OS_HW_DISCOVERY" -IP_Address $ipv4[0] -Log_Type "Info" -Log_Message "Script Start";
             Add-Content -Path $My_StatusLogPath -Value $My_StatusLogString -Encoding UTF8 -ErrorAction Stop;
             start-sleep -Milliseconds 100;
             Writeto-Log -TypeOfComment Info -Comment "First update in Status log." -LogPath $LogPath;
@@ -164,7 +168,7 @@ if(InitializeScript -ModulePath $My_FolderPath -eq $true)
             $objCSVCreation | Add-Member -MemberType NoteProperty -Name "AdditionalIP" -Value "";
             $objCSVCreation | Add-Member -MemberType NoteProperty -Name "SubnetMask" -Value "";
             $objCSVCreation | Add-Member -MemberType NoteProperty -Name "Subnet" -Value "";
-			$objCSVCreation | Add-Member -MemberType NoteProperty -Name "Gateway" -Value "";
+            $objCSVCreation | Add-Member -MemberType NoteProperty -Name "Gateway" -Value "";
             $objCSVCreation | Add-Member -MemberType NoteProperty -Name "MACAddress" -Value "";
             $objCSVCreation | Add-Member -MemberType NoteProperty -Name "Hostname" -Value "";
             $objCSVCreation | Add-Member -MemberType NoteProperty -Name "Serial_Number" -Value "";
@@ -287,48 +291,48 @@ if(InitializeScript -ModulePath $My_FolderPath -eq $true)
             $psbios.BIOSVersion | foreach { $temp = $temp + $_ + " " }
             $objCSvCreation.BIOS_Version = $temp;
 
-			$ipconfig = ipconfig
-			$gw1 = (Get-NetIPConfiguration).IPv4DefaultGateway|select NextHop
-			$gw = $gw1.NextHop
-			$ipp1 = Test-Connection -ComputerName (hostname) -Count 1  | Select IPV4Address
-			$ipp = $ipp1.IPV4Address
-			$SubnetMask = ($ipconfig | where {$_ -match "Subnet"}).Split(":")[1].Replace(" ","")
-			if ($SubnetMask -Match "128.0.0.0" ) {$dsubnet = "$ipp/1"}
-			ElseIf ($SubnetMask -Match "192.0.0.0" ) {$dsubnet = "$ipp/2"}
-			ElseIf ($SubnetMask -Match "224.0.0.0" ) {$dsubnet = "$ipp/3"}
-			ElseIf ($SubnetMask -Match "240.0.0.0" ) {$dsubnet = "$ipp/4"}
-			ElseIf ($SubnetMask -Match "248.0.0.0" ) {$dsubnet = "$ipp/5"}
-			ElseIf ($SubnetMask -Match "252.0.0.0" ) {$dsubnet = "$ipp/6"}
-			ElseIf ($SubnetMask -Match "254.0.0.0" ) {$dsubnet = "$ipp/7"}
-			ElseIf ($SubnetMask -Match "255.0.0.0" ) {$dsubnet = "$ipp/8"}
-			ElseIf ($SubnetMask -Match "255.128.0.0" ) {$dsubnet = "$ipp/9"}
-			ElseIf ($SubnetMask -Match "255.192.0.0" ) {$dsubnet = "$ipp/10"}
-			ElseIf ($SubnetMask -Match "255.224.0.0" ) {$dsubnet = "$ipp/11"}
-			ElseIf ($SubnetMask -Match "255.240.0.0" ) {$dsubnet = "$ipp/12"}
-			ElseIf ($SubnetMask -Match "255.248.0.0" ) {$dsubnet = "$ipp/13"}
-			ElseIf ($SubnetMask -Match "255.252.0.0" ) {$dsubnet = "$ipp/14"}
-			ElseIf ($SubnetMask -Match "255.254.0.0" ) {$dsubnet = "$ipp/15"}
-			ElseIf ($SubnetMask -Match "255.255.0.0" ) {$dsubnet = "$ipp/16"}
-			ElseIf ($SubnetMask -Match "255.255.128.0" ) {$dsubnet = "$ipp/17"}
-			ElseIf ($SubnetMask -Match "255.255.192.0" ) {$dsubnet = "$ipp/18"}
-			ElseIf ($SubnetMask -Match "255.255.224.0" ) {$dsubnet = "$ipp/19"}
-			ElseIf ($SubnetMask -Match "255.255.240.0" ) {$dsubnet = "$ipp/20"}
-			ElseIf ($SubnetMask -Match "255.255.248.0" ) {$dsubnet = "$ipp/21"}
-			ElseIf ($SubnetMask -Match "255.255.252.0" ) {$dsubnet = "$ipp/22"}
-			ElseIf ($SubnetMask -Match "255.255.254.0" ) {$dsubnet = "$ipp/23"}
-			ElseIf ($SubnetMask -Match "255.255.255.0" ) {$dsubnet = "$ipp/24"}
-			ElseIf ($SubnetMask -Match "255.255.255.128" ) {$dsubnet = "$ipp/25"}
-			ElseIf ($SubnetMask -Match "255.255.255.224" ) {$dsubnet = "$ipp/26"}
-			ElseIf ($SubnetMask -Match "255.255.255.192" ) {$dsubnet = "$ipp/27"}
-			ElseIf ($SubnetMask -Match "255.255.255.240" ) {$dsubnet = "$ipp/28"}
-			ElseIf ($SubnetMask -Match "255.255.255.248" ) {$dsubnet = "$ipp/29"}
-			ElseIf ($SubnetMask -Match "255.255.255.252" ) {$dsubnet = "$ipp/30"}
-			ElseIf ($SubnetMask -Match "255.255.255.254" ) {$dsubnet = "$ipp/31"}
-			ElseIf ($SubnetMask -Match "255.255.255.255" ) {$dsubnet = "$ipp/32"}
-			Else {$dsubnet = "" }
+$ipconfig = ipconfig
+$gw1 = (Get-NetIPConfiguration).IPv4DefaultGateway|select NextHop
+$gw = $gw1.NextHop
+$ipp1 = Test-Connection -ComputerName (hostname) -Count 1  | Select IPV4Address
+$ipp = $ipp1.IPV4Address
+$SubnetMask = ($ipconfig | where {$_ -match "Subnet"}).Split(":")[1].Replace(" ","")
+if ($SubnetMask -Match "128.0.0.0" ) {$dsubnet = "$ipp/1"}
+ElseIf ($SubnetMask -Match "192.0.0.0" ) {$dsubnet = "$ipp/2"}
+ElseIf ($SubnetMask -Match "224.0.0.0" ) {$dsubnet = "$ipp/3"}
+ElseIf ($SubnetMask -Match "240.0.0.0" ) {$dsubnet = "$ipp/4"}
+ElseIf ($SubnetMask -Match "248.0.0.0" ) {$dsubnet = "$ipp/5"}
+ElseIf ($SubnetMask -Match "252.0.0.0" ) {$dsubnet = "$ipp/6"}
+ElseIf ($SubnetMask -Match "254.0.0.0" ) {$dsubnet = "$ipp/7"}
+ElseIf ($SubnetMask -Match "255.0.0.0" ) {$dsubnet = "$ipp/8"}
+ElseIf ($SubnetMask -Match "255.128.0.0" ) {$dsubnet = "$ipp/9"}
+ElseIf ($SubnetMask -Match "255.192.0.0" ) {$dsubnet = "$ipp/10"}
+ElseIf ($SubnetMask -Match "255.224.0.0" ) {$dsubnet = "$ipp/11"}
+ElseIf ($SubnetMask -Match "255.240.0.0" ) {$dsubnet = "$ipp/12"}
+ElseIf ($SubnetMask -Match "255.248.0.0" ) {$dsubnet = "$ipp/13"}
+ElseIf ($SubnetMask -Match "255.252.0.0" ) {$dsubnet = "$ipp/14"}
+ElseIf ($SubnetMask -Match "255.254.0.0" ) {$dsubnet = "$ipp/15"}
+ElseIf ($SubnetMask -Match "255.255.0.0" ) {$dsubnet = "$ipp/16"}
+ElseIf ($SubnetMask -Match "255.255.128.0" ) {$dsubnet = "$ipp/17"}
+ElseIf ($SubnetMask -Match "255.255.192.0" ) {$dsubnet = "$ipp/18"}
+ElseIf ($SubnetMask -Match "255.255.224.0" ) {$dsubnet = "$ipp/19"}
+ElseIf ($SubnetMask -Match "255.255.240.0" ) {$dsubnet = "$ipp/20"}
+ElseIf ($SubnetMask -Match "255.255.248.0" ) {$dsubnet = "$ipp/21"}
+ElseIf ($SubnetMask -Match "255.255.252.0" ) {$dsubnet = "$ipp/22"}
+ElseIf ($SubnetMask -Match "255.255.254.0" ) {$dsubnet = "$ipp/23"}
+ElseIf ($SubnetMask -Match "255.255.255.0" ) {$dsubnet = "$ipp/24"}
+ElseIf ($SubnetMask -Match "255.255.255.128" ) {$dsubnet = "$ipp/25"}
+ElseIf ($SubnetMask -Match "255.255.255.224" ) {$dsubnet = "$ipp/26"}
+ElseIf ($SubnetMask -Match "255.255.255.192" ) {$dsubnet = "$ipp/27"}
+ElseIf ($SubnetMask -Match "255.255.255.240" ) {$dsubnet = "$ipp/28"}
+ElseIf ($SubnetMask -Match "255.255.255.248" ) {$dsubnet = "$ipp/29"}
+ElseIf ($SubnetMask -Match "255.255.255.252" ) {$dsubnet = "$ipp/30"}
+ElseIf ($SubnetMask -Match "255.255.255.254" ) {$dsubnet = "$ipp/31"}
+ElseIf ($SubnetMask -Match "255.255.255.255" ) {$dsubnet = "$ipp/32"}
+Else {$dsubnet = "" }
 
-			$objCSVCreation.Subnet = $dsubnet;
-			$objCSVCreation.Gateway = $gw;
+$objCSVCreation.Subnet = $dsubnet;
+$objCSVCreation.Gateway = $gw;
 			
 			$hyp = Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V |Select-Object DisplayName, State
 			$hyp_display = $hyp.DisplayName;
@@ -359,13 +363,22 @@ if(InitializeScript -ModulePath $My_FolderPath -eq $true)
             Writeto-Log -TypeOfComment Info -Comment "Clearing Temporary files." -LogPath $LogPAth;
             Remove-Item -Path $OutPath -Force -Confirm:$false -ErrorAction SilentlyContinue | Out-null;
 
-            $My_StatusLogString = UpdateStatusLog -Service_Function "OS_HW_DISCOVERY" -Version $ScriptVersion -IP_Address $ipv4[0] -Log_Type "Success" -Log_Message "Script execution successful";
+            #$My_StatusLogString = UpdateStatusLog -Service_Function "OS_HW_DISCOVERY" -Version $ScriptVersion -IP_Address $ipv4[0] -Log_Type "Success" -Log_Message "Script execution successful";
+	    $My_StatusLogString = UpdateStatusLog -Service_Function "OS_HW_DISCOVERY" -IP_Address $ipv4[0] -Log_Type "Success" -Log_Message "Script execution successful";
             Add-Content -Path $My_StatusLogPath -Value $My_StatusLogString -Encoding UTF8 -ErrorAction Stop;
             start-sleep -Milliseconds 100;
             Writeto-Log -TypeOfComment Info -Comment "Second update in Status log." -LogPath $LogPath;
             Writeto-Log -TypeOfComment Info -Comment $My_StatusLogString -LogPath $LogPath;
 
-            $My_StatusLogString = UpdateStatusLog -Service_Function "OS_HW_DISCOVERY" -Version $ScriptVersion -IP_Address $ipv4[0] -Log_Type "Info" -Log_Message "Script output generated";
+            #$My_StatusLogString = UpdateStatusLog -Service_Function "OS_HW_DISCOVERY" -Version $ScriptVersion -IP_Address $ipv4[0] -Log_Type "Info" -Log_Message "Script output generated";
+            $My_StatusLogString = UpdateStatusLog -Service_Function "OS_HW_DISCOVERY" -IP_Address $ipv4[0] -Log_Type "Info" -Log_Message "Script output generated";
+            Add-Content -Path $My_StatusLogPath -Value $My_StatusLogString -Encoding UTF8 -ErrorAction Stop;
+            start-sleep -Milliseconds 100;
+            Writeto-Log -TypeOfComment Info -Comment "Third update in Status log." -LogPath $LogPath;
+            Writeto-Log -TypeOfComment Info -Comment $My_StatusLogString -LogPath $LogPath;
+
+            #$My_StatusLogString = UpdateStatusLog -Service_Function "OS_HW_DISCOVERY" -Version $ScriptVersion -IP_Address $ipv4[0] -Log_Type "Info" -Log_Message "Script output generated";
+            $My_StatusLogString = UpdateStatusLog -Service_Function "OS_HW_DISCOVERY" -IP_Address $ipv4[0] -Log_Type "Info" -Log_Message "script_version-2.0";
             Add-Content -Path $My_StatusLogPath -Value $My_StatusLogString -Encoding UTF8 -ErrorAction Stop;
             start-sleep -Milliseconds 100;
             Writeto-Log -TypeOfComment Info -Comment "Third update in Status log." -LogPath $LogPath;
@@ -381,13 +394,15 @@ if(InitializeScript -ModulePath $My_FolderPath -eq $true)
             Writeto-Log -TypeOfComment Error -Comment $("Code error '" + $error[0].invocationinfo.Line.trim() +"'.") -LogPath $LogPath -EchoDisplayOff;
             Writeto-Log -TypeOfComment Error -Comment $("Exception details '" + $error[0].exception +"'.") -LogPath $LogPath -EchoDisplayOff;
             
-            $My_StatusLogString = UpdateStatusLog -Service_Function "OS_HW_DISCOVERY" -Version $ScriptVersion -IP_Address $ipv4[0] -Log_Type "Failure" -Log_Message "Script execution failure";
+            #$My_StatusLogString = UpdateStatusLog -Service_Function "OS_HW_DISCOVERY" -Version $ScriptVersion -IP_Address $ipv4[0] -Log_Type "Failure" -Log_Message "Script execution failure";
+            $My_StatusLogString = UpdateStatusLog -Service_Function "OS_HW_DISCOVERY" -IP_Address $ipv4[0] -Log_Type "Failure" -Log_Message "Script execution failure";
             Add-Content -Path $My_StatusLogPath -Value $My_StatusLogString -Encoding UTF8 -ErrorAction Stop;
             start-Sleep -Milliseconds 100;
             Writeto-Log -TypeOfComment Info -Comment "Second update in Status log." -LogPath $LogPath;
             Writeto-Log -TypeOfComment Info -Comment $My_StatusLogString -LogPath $LogPath;
         
-            $My_StatusLogString = UpdateStatusLog -Service_Function "OS_HW_DISCOVERY" -Version $ScriptVersion -IP_Address $ipv4[0] -Log_Type "Info" -Log_Message "Script output uncertain";
+            #$My_StatusLogString = UpdateStatusLog -Service_Function "OS_HW_DISCOVERY" -Version $ScriptVersion -IP_Address $ipv4[0] -Log_Type "Info" -Log_Message "Script output uncertain";
+            $My_StatusLogString = UpdateStatusLog -Service_Function "OS_HW_DISCOVERY" -IP_Address $ipv4[0] -Log_Type "Info" -Log_Message "Script output uncertain";
             Add-Content -Path $My_StatusLogPath -Value $My_StatusLogString -Encoding UTF8 -ErrorAction Stop;
             start-Sleep -Milliseconds 100;
             Writeto-Log -TypeOfComment Info -Comment "Third update in Status log." -LogPath $LogPath;
